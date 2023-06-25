@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+option go_package = "go/model/im";
+
+enum Command {
+    SUBSCRIBE_CHAT = 0;
+    UNSUBSCRIBE_CHAT = 1;
+    SEND_MESSAGE = 2;
+    FETCH_MESSAGES = 3;
+    REPORT_ABUSE = 4;
+    SWITCH_LANGUAGE = 5;
+    USER_GROUP = 6;
+    PUSH_MESSAGE = 100;
+    USER_STATUS = 200;
+    GROUP_STATUS = 201;
+}
+
+enum Language {
+    DEFAULT = 0;
+    ZH_CN = 1;
+    EN_US = 2;
+    ZH_HK = 3;
+    ID_ID = 4;
+    MS_MY = 5;
+}
+
+message Request {
+    string reqID = 1;
+    Command command = 2;
+    google.protobuf.Any data = 3;
+}
+
+message Push {
+    string reqID = 1;
+    Command command = 2;
+    int32 code = 3;
+    string msg = 4;
+    google.protobuf.Any data = 5;
+}
+
+message ChatIDsWrapper {
+    repeated int32 chatIDs = 1;
+}
+
+message MessageEntityWrapper {
+    repeated MessageEntity messageEntity = 1;
+}
+
+message MessageEntity {
+    enum ContentType {
+        CHAT = 0;
+        ORDER = 1;
+    }
+
+    enum Visible {
+        ALL = 0;
+        SENDER = 1;
+    }
+
+    int32 msgID = 1;
+    ContentType contentType = 2;
+    int32 vdID = 3;
+    int32 sender = 4;
+    string senderName = 5;
+    int32 chatID = 6;
+    int32 vip = 7;
+    int32 avatar = 8;
+    int32 replyTo = 9;
+    string content = 10;
+    Visible visible = 11;
+    int64 timestamp = 12;
+}
+
+message FetchArgs {
+    int32 pointer = 1;
+    int32 chatID = 2;
+}
+
+message ReportAbuseArgs {
+    int32 userID = 1;
+    string reason = 2;
+}
+
+message Notify {
+    Command command = 1;
+    google.protobuf.Any data = 2;
+}
+
+message UserStatus {
+    string name = 1;
+    int32 vdID = 2;
+    int32 status = 3;
+}
+
+message SwitchLanguageArg {
+    string language = 1;
+}
+
+message Group {
+    int32 ID = 1;
+    string name = 2;
+    string IconUrl = 3;
+    int32 MemberCount = 4;
+    int32 Deleted = 5;
+}
+
+message GroupsWrapper {
+    repeated Group groups = 1;
+}
+
+message UserGroupStateArg {
+    enum StateType {
+        REGISTRATION = 0;
+        CANCELLATION = 1;
+    }
+
+    string reqID = 1;
+    int32 UserID = 2;
+    int32 GroupID = 3;
+    StateType Status = 4;
+}
